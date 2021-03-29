@@ -2,9 +2,6 @@ package com.whr.baseui.utils;
 
 import java.lang.reflect.ParameterizedType;
 
-/**
- *
- */
 public class TUtils {
     public static <T> T getT(Object o, int i) {
         try {

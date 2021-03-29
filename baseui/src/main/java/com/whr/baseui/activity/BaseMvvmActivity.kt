@@ -18,9 +18,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.whr.baseui.R
 import com.whr.baseui.bean.ViewStatusEnum
+import com.whr.baseui.common.ext.getGenericClass
 import com.whr.baseui.fragment.BaseFragment
 import com.whr.baseui.helper.UiCoreHelper
 import com.whr.baseui.mvp.BaseMvpView
@@ -195,6 +197,7 @@ abstract class BaseMvvmActivity<V : ViewDataBinding, VM : BaseViewModel> : Swipe
             mViewModel = ViewModelProviders.of(this).get(it)
             mViewModel.let(lifecycle::addObserver)
         }
+        mViewModel = ViewModelProvider(this).get(getGenericClass(1))
     }
 
     /**
