@@ -7,16 +7,16 @@ import com.example.baseui2.R
 import com.whr.baseui.base.BaseMvvmActivity
 import kotlinx.android.synthetic.main.testlayout.*
 
-class TestActivity: BaseMvvmActivity<TestVModel>() {
-    override fun setContentView(view: View?) {
-        super.setContentView(R.layout.testlayout)
-    }
+class MVVMTestActivity: BaseMvvmActivity<TestVModel>() {
     override fun initViews(savedInstanceState: Bundle?) {
         super.initViews(savedInstanceState)
         mViewModel.requestTestData()
         mViewModel.test.observe(this, Observer {
-            resultTv.text=it
             mViewModel.showToast(it!!)
         })
+    }
+
+    override fun getLayoutId(): Int {
+       return R.layout.testlayout
     }
 }

@@ -24,6 +24,7 @@ open abstract  class BaseActivity : AppCompatActivity() {
     private var mWaitDialog: WaitProgressDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(getLayoutId())
         AppManager.getInstance().addActivity(this)
         context = this
         if (isImmerse()) {
@@ -31,6 +32,8 @@ open abstract  class BaseActivity : AppCompatActivity() {
         }
         initViews(savedInstanceState)
     }
+
+    abstract fun getLayoutId(): Int
     abstract fun initViews(savedInstanceState: Bundle?)
     private fun immerse() {
         immersionBar {

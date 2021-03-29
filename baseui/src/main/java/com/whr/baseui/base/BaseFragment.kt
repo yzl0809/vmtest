@@ -3,12 +3,16 @@ package com.whr.baseui.base
 import android.app.Activity
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.gyf.immersionbar.ImmersionBar
 import com.whr.baseui.widget.WaitProgressDialog
 
 open abstract class BaseFragment : Fragment() {
+    private var mRootView // 根布局
+            : View? = null
     var TAG:String = javaClass.name
     private var mWaitDialog: WaitProgressDialog? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -17,8 +21,21 @@ open abstract class BaseFragment : Fragment() {
         view.isClickable = true
         initViews(savedInstanceState)
     }
-    abstract fun initViews(savedInstanceState: Bundle?)
 
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        if (mRootView == null) {
+//            mRootView = inflater.inflate(getLayoutId(), null)
+//            val parent = mRootView?.parent as ViewGroup
+//            parent?.removeView(mRootView)
+//        }
+//        return mRootView
+//    }
+    abstract fun initViews(savedInstanceState: Bundle?)
+    abstract fun getLayoutId(): Int
     /**
      * 偏移状态栏高度
      */
