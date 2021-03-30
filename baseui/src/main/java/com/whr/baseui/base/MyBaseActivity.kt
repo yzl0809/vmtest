@@ -1,6 +1,7 @@
 package com.whr.baseui.base
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
 import android.text.TextUtils
@@ -8,33 +9,34 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import com.gyf.immersionbar.ImmersionBar
 import com.gyf.immersionbar.ktx.immersionBar
-import com.whr.baseui.common.AppManager
 import com.whr.baseui.widget.WaitProgressDialog
 
 /**
  * 统一 Activity
  * 支持沉浸式模式
  */
-open abstract  class BaseActivity : AppCompatActivity() {
+open abstract  class MyBaseActivity : AppCompatActivity() {
 
     protected lateinit var context: Context
     private var mWaitDialog: WaitProgressDialog? = null
+    @get:LayoutRes
+    abstract val layoutId: Int
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getLayoutId())
-        AppManager.getInstance().addActivity(this)
+        setContentView(layoutId)
         context = this
         if (isImmerse()) {
             immerse()
         }
-        initViews(savedInstanceState)
+        initViews()
+        if (null != intent) handleIntent(intent)
     }
-
-    abstract fun getLayoutId(): Int
-    abstract fun initViews(savedInstanceState: Bundle?)
+    abstract fun initViews()
     private fun immerse() {
         immersionBar {
             // 透明状态栏
@@ -45,7 +47,12 @@ open abstract  class BaseActivity : AppCompatActivity() {
             navigationBarDarkIcon(navBarDarkIcon(), 0.2f)
         }
     }
-
+    /**
+     * 获取Intent
+     *
+     * @param intent
+     */
+    open fun handleIntent(intent: Intent) {}
 
      fun showWaitDialog() {
         showWaitDialog("Loading")
@@ -69,6 +76,27 @@ open abstract  class BaseActivity : AppCompatActivity() {
             mWaitDialog!!.dismiss()
         }
     }
+
+
+
+     fun showToast(msg: String?) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+
+
+     fun showToast(strId: Int) {
+        Toast.makeText(this, getString(strId), Toast.LENGTH_SHORT).show()
+    }
+
+     fun showToast(strId1: Int, str: Int) {
+        Toast.makeText(this, getString(strId1) + getString(str), Toast.LENGTH_SHORT).show()
+    }
+
+     fun showToast(strId1: Int, strin2: String?) {
+        Toast.makeText(this, getString(strId1) + strin2, Toast.LENGTH_SHORT).show()
+    }
+
+
     /**
      * 偏移状态栏高度
      */
@@ -132,12 +160,17 @@ open abstract  class BaseActivity : AppCompatActivity() {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        // TODO Auto-generated method stub
+        if (ev.action == MotionEvent.ACTION_UP) {
+            if (isDoubleClick) {
+                return true
+            }
+        }
+        //点击软键盘外部，软键盘消失
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            val view = currentFocus
-            if (view != null && isHideInput(view, ev)) {
-                HideSoftInput(view.windowToken)
-                releaseFocus(ev)
+            // 获得当前得到焦点的View，一般情况下就是EditText（特殊情况就是轨迹求或者实体案件会移动焦点）
+            val v = currentFocus
+            if (isShouldHideInput(v, ev)) {
+                HideSoftInput(v!!.windowToken)
             }
         }
         return super.dispatchTouchEvent(ev)
@@ -154,6 +187,37 @@ open abstract  class BaseActivity : AppCompatActivity() {
             )
         }
     }
+    /**
+     * 根据EditText所在坐标和用户点击的坐标相对比，来判断是否隐藏键盘，因为当用户点击EditText时没必要隐藏
+     *
+     * @param v
+     * @param event
+     * @return
+     */
+    open fun isShouldHideInput(v: View?, event: MotionEvent): Boolean {
+        if (v != null && v is EditText) {
+            val l = intArrayOf(0, 0)
+            v.getLocationInWindow(l)
+            val left = l[0]
+            val top = l[1]
+            val bottom = top + v.height
+            val right = left + v.width
+            return event.x <= left || event.x >= right || event.y <= top || event.y >= bottom
+        }
+        // 如果焦点不是EditText则忽略，这个发生在视图刚绘制完，第一个焦点不在EditView上，和用户用轨迹球选择其他的焦点
+        return false
+    }
+    open fun hideSystemSoftInput() {
+        val view = window.peekDecorView()
+        if (view != null && view.windowToken != null) {
+            val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            im.hideSoftInputFromWindow(
+                view.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
+        }
+    }
+
 
     fun releaseFocus(event: MotionEvent) {
         // 点击其他地方失去焦点
@@ -180,8 +244,41 @@ open abstract  class BaseActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        AppManager.getInstance().removeActivity(this)
-    }
+    /**
+     * 返回页面布局
+     *
+     * @return
+     */
+
+    /**
+     * 是否支持双击，默认为不支持
+     */
+    private val mDoubleClickEnable = false
+
+    /**
+     * 上一次点击的时间戳
+     */
+    private var mLastClickTime: Long = 0
+
+    /**
+     * 被判断为重复点击的时间间隔
+     */
+    private val MIN_CLICK_DELAY_TIME: Long = 200
+
+    /**
+     * 检测双击
+     */
+    val isDoubleClick: Boolean
+        get() {
+            if (mDoubleClickEnable) return false
+            val time = System.currentTimeMillis()
+            if (time - mLastClickTime > MIN_CLICK_DELAY_TIME) {
+                mLastClickTime = time
+                return false
+            } else {
+                return true
+            }
+        }
+
+
 }

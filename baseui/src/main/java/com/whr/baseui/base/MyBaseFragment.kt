@@ -6,36 +6,38 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.gyf.immersionbar.ImmersionBar
 import com.whr.baseui.widget.WaitProgressDialog
 
-open abstract class BaseFragment : Fragment() {
+open abstract class MyBaseFragment : Fragment() {
     private var mRootView // 根布局
             : View? = null
     var TAG:String = javaClass.name
     private var mWaitDialog: WaitProgressDialog? = null
+    @get:LayoutRes
+    abstract val layoutId: Int
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //防止穿透事件
         view.isClickable = true
-        initViews(savedInstanceState)
+        initViews()
     }
 
-//    override fun onCreateView(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        if (mRootView == null) {
-//            mRootView = inflater.inflate(getLayoutId(), null)
-//            val parent = mRootView?.parent as ViewGroup
-//            parent?.removeView(mRootView)
-//        }
-//        return mRootView
-//    }
-    abstract fun initViews(savedInstanceState: Bundle?)
-    abstract fun getLayoutId(): Int
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        if (mRootView == null) {
+            mRootView = inflater.inflate(layoutId, null)
+            val parent = mRootView?.parent as ViewGroup
+            parent?.removeView(mRootView)
+        }
+        return mRootView
+    }
+    abstract fun initViews()
     /**
      * 偏移状态栏高度
      */

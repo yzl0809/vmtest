@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:gravity="center"
-    android:layout_height="match_parent">
-<Button
-    android:id="@+id/btn1"
-    android:layout_width="300dp"
-    android:layout_height="50dp"
-    android:layout_marginTop="50dp"
-    android:text="MVVMTestActivity"
-    android:clickable="true"
-    />
+    android:orientation="vertical">
+    <Button
+        android:id="@+id/btn0"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:clickable="true"
+        android:text="TestActivity" />
+    <Button
+        android:id="@+id/btn1"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:clickable="true"
+        android:text="MVVMTestActivity" />
+
     <Button
         android:id="@+id/btn2"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="50dp"
-        android:text="DataBingdingTestActivity"
         android:clickable="true"
-        />
+        android:text="DataBingdingTestActivity" />
 </LinearLayout>

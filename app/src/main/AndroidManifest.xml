@@ -11,16 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BaseUI2">
-        <activity android:name=".test.SplashActivity">
+        <activity android:name=".test.SplashActivityMy">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".test.MVVMTestActivity"/>
-        <activity android:name=".test.DataBingdingTestActivity"/>
+        <activity android:name=".test.TestActivity"/>
+        <activity android:name=".test.MVVMTestActivityMy"/>
+        <activity android:name=".test.DataBingDingTestActivity"/>
     </application>
 
 </manifest>

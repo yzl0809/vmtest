@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="item"
-            type="com.example.baseui2.test.TestBean" />
+            name="mainVM"
+            type="com.example.baseui2.test.TestVModel" />
     </data>
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="15dp"
-            android:text="@{item.content}"/>
+            android:text="@{mainVM.test}"/>
 
     </LinearLayout>
 
